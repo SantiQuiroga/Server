@@ -56,6 +56,34 @@ void setup_sigchld_handler() {
     }
 }
 
+void send_server_info(int client_socket, const char *status_code, const char *content_type) {
+    char response[BUFFER_SIZE];
+    snprintf(response, sizeof(response), "HTTP/1.0 %s\r\nContent-Type: %s\r\n\r\n", status_code, content_type);
+    send(client_socket, response, strlen(response), 0);
+}
+
+const char* get_content_type(char* path) {
+    char *extension = strrchr(path, '.');
+
+    if (extension == NULL) {
+        return "application/octet-stream";
+    } else if (strcmp(extension, ".html") == 0 || strcmp(extension, ".htm") == 0) {
+        return "text/html";
+    } else if (strcmp(extension, ".jpg") == 0 || strcmp(extension, ".jpeg") == 0) {
+        return "image/jpeg";
+    } else if (strcmp(extension, ".gif") == 0) {
+        return "image/gif";
+    } else if (strcmp(extension, ".png") == 0) {
+        return "image/png";
+    } else if (strcmp(extension, ".css") == 0) {
+        return "text/css";
+    } else if (strcmp(extension, ".txt") == 0 || strcmp(extension, ".py") == 0) {
+        return "text/plain";
+    } else {
+        return "application/octet-stream";
+    }
+}
+
 int create_server_socket() {
     int server_fd;
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
