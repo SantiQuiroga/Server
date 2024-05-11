@@ -1,0 +1,3 @@
+/home/santi/Desktop/ServerUnix/cmake-build-debug/CMakeFiles/ServerUnix.dir
+/home/santi/Desktop/ServerUnix/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/santi/Desktop/ServerUnix/cmake-build-debug/CMakeFiles/rebuild_cache.dir
