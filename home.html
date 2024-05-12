@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text">
+</head>
+<body>
+<header>
+    <h1>HTTP Server</h1>
+</header>
+<main>
+    <section>
+        <p>This is a simple HTTP server written in C. It supports GET and POST requests and can serve static files as well as execute Python scripts.</p>
+        <h2>How to Use</h2>
+        <ol>
+            <li>Compile the server program using a C compiler. For example, if you're using gcc, you can compile the program with the following command: <code>gcc -o server main.c</code></li>
+            <li>Run the compiled program: <code>./server</code>. The server will start and listen for connections on port 8080.</li>
+        </ol>
+        <h2>Using the Server with Chrome</h2>
+        <p>Once the server is running, you can interact with it using any web browser, including Chrome. Simply open Chrome and navigate to <code>http://localhost:8080</code>.</p>
+        <p>If you want to request a specific file, append the filename to the URL. For example, to request a file named `index.html`, navigate to <code>http://localhost:8080/index.html</code>.</p>
+        <p>However, the server will be exposed to the internet using Ngrok and the link will be provided by request.</p>
+        <h2>User Guide</h2>
+        <p>The server can serve static files and execute Python scripts. The files and scripts should be located in the <code>/home/santi/Desktop/ServerUnix/</code> directory.</p>
+        <ul>
+            <li>To request a static file, use a GET request. The server will return the contents of the file. If the file does not exist, the server will return a 404 Not Found error.</li>
+            <li>To execute a Python script, use a POST request. The server will execute the script and return the output. If the script does not exist or fails to execute, the server will return an appropriate error.</li>
+        </ul>
+    </section>
+</main>
+</body>
+</html>

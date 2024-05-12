@@ -11,6 +11,9 @@
 #define BUFFER_SIZE 1024
 #define MAX_CONNECTIONS 30
 
+const char *server_info = "server: HTTP Server/1.0\r\n\r\n";
+const char *BASE_PATH = "/home/santi/Desktop/ServerUnix/";
+
 char* execute_python_script(char* script_path) {
     FILE *python_output;
     char python_command[BUFFER_SIZE];
@@ -136,6 +139,31 @@ void handle_post_request(int client_socket, char* path) {
     }
 }
 
+void handle_connection(int client_socket) {
+    char buffer[BUFFER_SIZE] = {0};
+
+    read(client_socket, buffer, BUFFER_SIZE);
+
+    char method[5];
+    char path[BUFFER_SIZE];
+    sscanf(buffer, "%s %s", method, path);
+
+    char *extension = strrchr(path, '.');
+    int is_python_script = extension && strcmp(extension, ".py") == 0;
+
+    if  (strcmp(method, "GET") == 0) {
+        handle_get_request(client_socket, path);
+    } else if (strcmp(method, "POST") == 0 && is_python_script) {
+        handle_post_request(client_socket, path);
+    } else {
+        char response[BUFFER_SIZE] = {0};
+        snprintf(response, sizeof(response), "HTTP/1.0 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nBad Request.");
+        send(client_socket, response, strlen(response), 0);
+    }
+
+    close(client_socket);
+}
+
 int create_server_socket() {
     int server_fd;
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -175,4 +203,40 @@ int accept_connection(int server_fd, struct sockaddr_in *address) {
         exit(EXIT_FAILURE);
     }
     return client_socket;
+}
+
+void handle_client_connection(int client_socket, int server_fd) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        close(server_fd);
+        handle_connection(client_socket);
+        exit(EXIT_SUCCESS);
+    } else if (pid < 0) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    } else {
+        close(client_socket);
+    }
+}
+
+int main() {
+    int server_fd, client_socket;
+    struct sockaddr_in address;
+
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons( PORT );
+
+    server_fd = create_server_socket();
+    set_server_options(server_fd);
+    bind_server_socket(server_fd, &address);
+    listen_for_connections(server_fd);
+
+    setup_sigchld_handler();
+
+    while (1) {
+        printf("\nwaiting for a connection...\n\n");
+        client_socket = accept_connection(server_fd, &address);
+        handle_client_connection(client_socket, server_fd);
+    }
 }
