@@ -84,6 +84,58 @@ const char* get_content_type(char* path) {
     }
 }
 
+void handle_get_request(int client_socket, char* path) {
+    char buffer[BUFFER_SIZE] = {0};
+
+    if (strcmp(path, "/") == 0) {
+        send_server_info(client_socket, "200 OK", "text/plain");
+        send(client_socket, server_info, strlen(server_info), 0);
+        return;
+    } else {
+        char *filename = strrchr(path, '/') + 1;
+        char full_path[BUFFER_SIZE];
+        snprintf(full_path, sizeof(full_path), "%s%s", BASE_PATH, filename);
+        printf("Opening file: %s\n", full_path);
+
+        FILE *file = fopen(full_path, "r");
+        if (file != NULL) {
+            const char* content_type = get_content_type(full_path);
+            send_server_info(client_socket, "200 OK", content_type);
+            while (fgets(buffer, sizeof(buffer), file) != NULL) {
+                send(client_socket, buffer, strlen(buffer), 0);
+            }
+            fclose(file);
+        } else {
+            send_server_info(client_socket, "404 Not Found", "text/plain");
+        }
+    }
+}
+
+void handle_post_request(int client_socket, char* path) {
+    char *filename = strrchr(path, '/') + 1;
+    char full_path[BUFFER_SIZE];
+    snprintf(full_path, sizeof(full_path), "%s%s", BASE_PATH, filename);
+    printf("Opening file: %s\n", full_path);
+
+    FILE *file = fopen(full_path, "r");
+    if (file != NULL) {
+        char *python_output = execute_python_script(full_path);
+        if (python_output != NULL) {
+            const char* content_type = get_content_type(full_path);
+            send_server_info(client_socket, "200 OK", content_type);
+            if (strcmp(path, "/") == 0) {
+                send(client_socket, server_info, strlen(server_info), 0);
+            }
+            send(client_socket, python_output, strlen(python_output), 0);
+        } else {
+            send_server_info(client_socket, "500 Internal Server Error", "text/plain");
+        }
+        fclose(file);
+    } else {
+        send_server_info(client_socket, "404 Not Found", "text/plain");
+    }
+}
+
 int create_server_socket() {
     int server_fd;
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
