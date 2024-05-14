@@ -4,7 +4,7 @@ This is a simple HTTP server written in C. It supports GET and POST requests and
 
 ## How to Use
 
-1. Run the compiled program:
+Run the compiled program:
 
 ```bash
 ./server.sh -p <port>
@@ -18,7 +18,7 @@ Once the server is running, you can interact with it using any web browser, incl
 
 If you want to request a specific file, append the filename to the URL. For example, to request a file named `index.html`, navigate to `http://localhost:<port>/index.html`.
 
-However, the server will be exposed to the internet using Ngrok and the link will be provided by request.
+However, the server can be exposed to the internet using Ngrok and the link can be provided by request.
 
 ## User Guide
 
