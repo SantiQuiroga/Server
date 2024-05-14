@@ -4,31 +4,25 @@ This is a simple HTTP server written in C. It supports GET and POST requests and
 
 ## How to Use
 
-1. Compile the server program using a C compiler. For example, if you're using gcc, you can compile the program with the following command:
+1. Run the compiled program:
 
 ```bash
-gcc -o server main.c
+./server.sh -p <port>
 ```
 
-2. Run the compiled program:
-
-```bash
-./server
-```
-
-The server will start and listen for connections on port 8080.
+The server will start and listen for connections on port the port specified.
 
 ## Using the Server with Chrome
 
-Once the server is running, you can interact with it using any web browser, including Chrome. Simply open Chrome and navigate to `http://localhost:8080`.
+Once the server is running, you can interact with it using any web browser, including Chrome. Simply open Chrome and navigate to `http://localhost:<port>`.
 
-If you want to request a specific file, append the filename to the URL. For example, to request a file named `index.html`, navigate to `http://localhost:8080/index.html`.
+If you want to request a specific file, append the filename to the URL. For example, to request a file named `index.html`, navigate to `http://localhost:<port>/index.html`.
 
 However, the server will be exposed to the internet using Ngrok and the link will be provided by request.
 
 ## User Guide
 
-The server can serve static files and execute Python scripts. The files and scripts should be located in the `/home/santi/Desktop/ServerUnix/` directory.
+The server can serve static files and execute Python scripts. The files and scripts should be located in the server directory.
 
 - To request a static file, use a GET request. The server will return the contents of the file. If the file does not exist, the server will return a 404 Not Found error.
 
